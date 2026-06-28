@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 @SpringBootTest
-public class aitext {
+public class AITextTest {
 
     @Autowired
 

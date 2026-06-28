@@ -2,6 +2,7 @@ package com.huxi.java.ai.langchain4j.controller;
 
 import com.huxi.java.ai.langchain4j.assistant.XXAgent;
 import com.huxi.java.ai.langchain4j.bean.ChatForm;
+import com.huxi.java.ai.langchain4j.service.AppointmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -19,6 +20,8 @@ public class XXController {
 
     @Autowired
     private XXAgent xxAgent;
+    @Autowired
+    private AppointmentService appointmentService;
 
 
     @Operation(summary = "对话")

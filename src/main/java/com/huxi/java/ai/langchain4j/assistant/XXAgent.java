@@ -17,7 +17,7 @@ import static dev.langchain4j.service.spring.AiServiceWiringMode.EXPLICIT;
         chatMemoryProvider = "chatMemoryProviderXX")
 public interface XXAgent {
 
-    @SystemMessage(fromResource = "XX-prompt-template.txt")
+    @SystemMessage(fromResource = "prompts/XX-prompt-template.txt")
     Flux<String> chat(@MemoryId Long memoryId, @UserMessage String userMessage);
 
 
