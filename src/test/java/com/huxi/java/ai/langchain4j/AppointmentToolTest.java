@@ -1,4 +1,4 @@
-﻿package com.huxi.java.ai.langchain4j;
+package com.huxi.java.ai.langchain4j;
 
 import com.huxi.java.ai.langchain4j.entity.Appointment;
 import com.huxi.java.ai.langchain4j.service.AppointmentService;
@@ -58,6 +58,35 @@ class AppointmentToolTest {
 
         assertThat(result).contains("陈静").contains("可预约");
         verify(doctorScheduleService).queryAvailability("皮肤科", "2025-06-25", "下午", "陈静");
+    }
+
+    @Test
+    @DisplayName("queryDepartment: 重复调用相同参数仅查一次数据库")
+    void testQueryDepartmentDuplicateCallHitsCache() {
+        when(doctorScheduleService.queryAvailability("神经内科", "2025-06-25", "上午", null))
+                .thenReturn("可预约：王芳（主任医师，剩17个号）、赵强（主治医师，剩5个号）");
+
+        appointmentTool.queryDepartment("神经内科", "2025-06-25", "上午", null);
+        String result = appointmentTool.queryDepartment("神经内科", "2025-06-25", "上午", null);
+
+        assertThat(result).contains("可预约").contains("王芳");
+        verify(doctorScheduleService, times(1))
+                .queryAvailability("神经内科", "2025-06-25", "上午", null);
+    }
+
+    @Test
+    @DisplayName("queryDepartment: 不同参数各自缓存，分别查数据库")
+    void testQueryDepartmentDifferentParamsSeparateCache() {
+        when(doctorScheduleService.queryAvailability("神经内科", "2025-06-25", "上午", null))
+                .thenReturn("神经内科上午可预约");
+        when(doctorScheduleService.queryAvailability("神经内科", "2025-06-25", "下午", null))
+                .thenReturn("神经内科下午可预约");
+
+        appointmentTool.queryDepartment("神经内科", "2025-06-25", "上午", null);
+        appointmentTool.queryDepartment("神经内科", "2025-06-25", "下午", null);
+
+        verify(doctorScheduleService).queryAvailability("神经内科", "2025-06-25", "上午", null);
+        verify(doctorScheduleService).queryAvailability("神经内科", "2025-06-25", "下午", null);
     }
 
     // ==================== bookAppointment ====================

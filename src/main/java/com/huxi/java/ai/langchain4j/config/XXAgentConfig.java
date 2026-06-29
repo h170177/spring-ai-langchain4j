@@ -49,8 +49,8 @@ public class XXAgentConfig {
                 .builder()
                 .embeddingModel(embeddingModel)
                 .embeddingStore(embeddingStore)
-                .maxResults(1)
-                .minScore(0.8)
+                .maxResults(3)
+                .minScore(0.6)
                 .build();
         return new CachedContentRetriever(retriever);
     }

@@ -8,8 +8,14 @@ import dev.langchain4j.agent.tool.Tool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Component("appointmentTools")
 public class AppointmentTool {
+
+    private final Map<String, String> queryCache = new ConcurrentHashMap<>();
+
     @Autowired
     private AppointmentService appointmentService;
 
@@ -57,6 +63,7 @@ public class AppointmentTool {
     }
 
     @Tool(name = "查询是否有号源", value = "根据科室名称、日期、时段和可选的医生姓名查询号源情况。" +
+            "此工具是幂等的，同一组参数在整个对话中只需调用一次，重复调用不会返回不同结果。" +
             "如果未指定医生姓名，返回该科室该时段所有可预约的医生列表及剩余号数；" +
             "如果指定了医生姓名，返回该医生在该时段的号源情况。")
     public String queryDepartment(
@@ -65,6 +72,8 @@ public class AppointmentTool {
             @P(value = "时间，可选值：上午、下午") String time,
             @P(value = "医生名称", required = false) String doctorName
     ) {
-        return doctorScheduleService.queryAvailability(name, date, time, doctorName);
+        String cacheKey = name + "|" + date + "|" + time + "|" + (doctorName != null ? doctorName : "ALL");
+        return queryCache.computeIfAbsent(cacheKey,
+                k -> doctorScheduleService.queryAvailability(name, date, time, doctorName));
     }
 }

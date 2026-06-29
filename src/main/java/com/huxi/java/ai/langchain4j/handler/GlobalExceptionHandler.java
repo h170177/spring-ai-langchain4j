@@ -1,4 +1,3 @@
-// 新文件: src/main/java/com/huxi/java/ai/langchain4j/handler/GlobalExceptionHandler.java
 package com.huxi.java.ai.langchain4j.handler;
 
 import dev.langchain4j.exception.LangChain4jException;
@@ -9,17 +8,18 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import reactor.core.publisher.Flux;
 
-import java.util.Map;
-
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final String MEDICAL_FALLBACK =
+            "系统繁忙，请稍后重试。如您有紧急症状（胸痛、呼吸困难、大出血等），请立即拨打120或前往最近的急诊科就医。";
 
     @ExceptionHandler(LangChain4jException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Flux<String> handleLangChain4jException(LangChain4jException e) {
         log.error("AI 服务调用异常", e);
-        return Flux.just("抱歉，AI 服务暂时不可用，请稍后重试");
+        return Flux.just(MEDICAL_FALLBACK);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -32,6 +32,6 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Flux<String> handleException(Exception e) {
         log.error("系统异常", e);
-        return Flux.just("系统繁忙，请稍后重试");
+        return Flux.just(MEDICAL_FALLBACK);
     }
 }

@@ -1,4 +1,4 @@
-﻿package com.huxi.java.ai.langchain4j;
+package com.huxi.java.ai.langchain4j;
 
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;

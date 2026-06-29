@@ -1,4 +1,4 @@
-﻿package com.huxi.java.ai.langchain4j;
+package com.huxi.java.ai.langchain4j;
 
 import com.huxi.java.ai.langchain4j.entity.Doctor;
 import com.huxi.java.ai.langchain4j.entity.DoctorSchedule;
